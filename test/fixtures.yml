@@ -806,7 +806,7 @@ stripe_emv_uk:
 
 # Used only for remote tests that use EMV credit card mocks
 stripe_emv_us:
-  login: 'sk_live_dmz0EwU3WRRtyfTmlzTthHTK'
+  login:
   fee_refund_login:
 
 # Working credentials, no need to replace

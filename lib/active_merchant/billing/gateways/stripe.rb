@@ -94,7 +94,6 @@ module ActiveMerchant #:nodoc:
         add_amount(post, money, options)
         add_application_fee(post, options)
 
-        # this block needs tests
         if emv_tc_response = options.delete(:icc_data)
           post[:card] = {emv_approval_data: emv_tc_response}
           commit(:post, "charges/#{CGI.escape(authorization)}", post, options)
