@@ -247,9 +247,9 @@ module ActiveMerchant #:nodoc:
           post[:statement_description] = options[:statement_description]
           add_customer(post, payment, options)
           add_flags(post, options)
-          add_application_fee(post, options)
         end
 
+        add_application_fee(post, options)
         post
       end
 
@@ -342,7 +342,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_metadata(post, options = {})
-        post[:metadata] = {}
+        post[:metadata] = options[:metadata] || {}
         post[:metadata][:email] = options[:email] if options[:email]
         post[:metadata][:order_id] = options[:order_id] if options[:order_id]
         post.delete(:metadata) if post[:metadata].empty?
@@ -411,7 +411,7 @@ module ActiveMerchant #:nodoc:
 
         success = !response.key?("error")
 
-        card = response["card"] || response["active_card"] || {}
+        card = response["card"] || response["active_card"] || response["source"] || {}
         avs_code = AVS_CODE_TRANSLATOR["line1: #{card["address_line1_check"]}, zip: #{card["address_zip_check"]}"]
         cvc_code = CVC_CODE_TRANSLATOR[card["cvc_check"]]
 
@@ -422,7 +422,7 @@ module ActiveMerchant #:nodoc:
           :authorization => success ? response["id"] : response["error"]["charge"],
           :avs_result => { :code => avs_code },
           :cvv_result => cvc_code,
-          :emv_authorization => response["emv_auth_data"],
+          :emv_authorization => card["emv_auth_data"],
           :error_code => success ? nil : STANDARD_ERROR_CODE_MAPPING[response["error"]["code"]]
         )
       end
